@@ -134,8 +134,9 @@ class Webhook extends Controller
             $profile = $res->getJSONDecodedBody();
 
             // create welcome message
-            $message  = "Salam kenal, " . $profile['displayName'] . "!\n";
-            $message .= "Silakan kirim pesan \"MULAI\" untuk memulai kuis Tebak Kode.";
+            $message  = "Salam kenal, " . $profile['displayName'] . "!\n\n";
+            $message .= "Selamat datang di K-Pop Meter Chatbot.\n\n";
+            $message .= "Silakan kirim pesan \"HELP\" untuk melihat cara main. \"ABOUT\" untuk melihat informasi chatbot. \"MULAI\" untuk memulai kuis K-Pop Meter.";
             $textMessageBuilder = new TextMessageBuilder($message);
 
             // create sticker message
@@ -171,8 +172,16 @@ class Webhook extends Controller
                 $this->userGateway->setUserProgress($this->user['user_id'], 1);
                 // send question no.1
                 $this->sendQuestion($event['replyToken'], 1);
+            } else if(strtolower($userMessage) == 'help') {
+                $message = 'Kamu akan menjawab beberapa pertanyaan tentang K-Pop. Ada 4 pilihan jawaban. Kamu bisa pilih jawaban pada button message atau ketik pesan sesuai dengan pilihan jawaban. Setelah semua pertanyaan selesai dijawab, akan ada skor.';
+                $textMessageBuilder = new TextMessageBuilder($message);
+                $this->bot->replyMessage($event['replyToken'], $textMessageBuilder);
+            } else if(strtolower($userMessage) == 'about') {
+                $message = 'K-Pop Meter Chatbot adalah kuis seputar seberapa tahukah kamu tentang K-Pop.';
+                $textMessageBuilder = new TextMessageBuilder($message);
+                $this->bot->replyMessage($event['replyToken'], $textMessageBuilder);
             } else {
-                $message = 'Silakan kirim pesan "MULAI" untuk memulai kuis.';
+                $message = 'Maaf, K-Pop Meter tidak mengerti pesan anda. Silakan kirim pesan "HELP" untuk melihat cara main. "ABOUT" untuk melihat informasi chatbot. "MULAI" untuk memulai kuis K-Pop Meter.';
                 $textMessageBuilder = new TextMessageBuilder($message);
                 $this->bot->replyMessage($event['replyToken'], $textMessageBuilder);
             }
